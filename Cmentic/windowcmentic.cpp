@@ -1,5 +1,6 @@
 #include "windowcmentic.h"
 #include "ui_windowcmentic.h"
+#include "connexion.h"
 #include <QMessageBox>
 
 WindowCmentic::WindowCmentic(QWidget *parent) :
@@ -20,5 +21,6 @@ void WindowCmentic::afficher()
 {
     QMessageBox msgBox;
     msgBox.setText(ui->txTest->toPlainText());
+    Connexion *con = new Connexion();
     msgBox.exec();
 }

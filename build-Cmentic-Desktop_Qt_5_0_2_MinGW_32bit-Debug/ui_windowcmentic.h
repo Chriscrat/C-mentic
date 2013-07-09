@@ -39,7 +39,7 @@ public:
     {
         if (WindowCmentic->objectName().isEmpty())
             WindowCmentic->setObjectName(QStringLiteral("WindowCmentic"));
-        WindowCmentic->resize(400, 300);
+        WindowCmentic->resize(400, 470);
         verticalLayout = new QVBoxLayout(WindowCmentic);
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
