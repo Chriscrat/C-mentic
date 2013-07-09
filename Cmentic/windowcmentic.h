@@ -3,6 +3,10 @@
 
 #include <QWidget>
 #include <QString>
+#include <vector>
+#include <moteursemantique.h>
+
+using namespace std;
 
 namespace Ui {
 class WindowCmentic;
@@ -15,13 +19,14 @@ class WindowCmentic : public QWidget
 public:
     explicit WindowCmentic(QWidget *parent = 0);
     ~WindowCmentic();
-
+    void startMoteurSemantique();
 
 public slots:
-    void afficher();
+    vector<string> getText();
     
 private:
     Ui::WindowCmentic *ui;
+
 };
 
 #endif // WINDOWCMENTIC_H
