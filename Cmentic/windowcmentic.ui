@@ -22,7 +22,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QPlainTextEdit" name="txTest"/>
+    <widget class="QPlainTextEdit" name="texteOriginal"/>
    </item>
    <item>
     <widget class="QLabel" name="label_2">
@@ -32,7 +32,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QPlainTextEdit" name="txModel"/>
+    <widget class="QPlainTextEdit" name="texteSoupconne"/>
    </item>
    <item>
     <widget class="QProgressBar" name="loadBarProgress">

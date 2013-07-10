@@ -6,10 +6,12 @@
 
 QT += core gui sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-LIBS += D:\dev\mysql-connector-c++-noinstall-1.1.3-winx64\lib\mysqlcppconn.lib
+
 TARGET = Cmentic
 TEMPLATE = app
 
+INCLUDEPATH += C:/boost_1_54_0
+LIBS += -LC:/boost_1_54_0/boost
 
 SOURCES += main.cpp\
         windowcmentic.cpp \
@@ -17,5 +19,10 @@ SOURCES += main.cpp\
 
 HEADERS  += windowcmentic.h \
     connexion.h
+=======
+    moteursemantique.cpp
+
+HEADERS  += windowcmentic.h \
+    moteursemantique.h
 
 FORMS    += windowcmentic.ui
