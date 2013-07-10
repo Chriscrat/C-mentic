@@ -1,27 +1,29 @@
 #include "connexion.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <winsock.h>
-#include <unistd.h>
+#include <QWidget>
+#include <QString>
 #include <QSqlDatabase>
+#include <QSqlQuery>
 #include <QMessageBox>
-#include <QtSql>
 
 Connexion::Connexion()
 {
+
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setHostName("localhost");
-    db.setDatabaseName("cmentic");
     db.setUserName("root");
     db.setPassword("");
-    if ( !db.open() )
-    {
-        qDebug("Connexion impossible : " ) ;
-    }
-    else
-    {
+    db.setDatabaseName("cmentic");
+    db.open();
+    QSqlQuery query;
+    query.prepare("SELECT * FROM verbe");
+    query.exec();
+    QMessageBox msgBox;
+    if(query.exec())
+        msgBox.setText("Requête ok");
 
-    }
+    else if(!query.exec())
+        msgBox.setText("Echec");
+
+    msgBox.exec();
+
 }
-
-
