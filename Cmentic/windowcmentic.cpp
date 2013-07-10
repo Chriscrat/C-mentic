@@ -21,13 +21,10 @@ WindowCmentic::~WindowCmentic()
 
 void WindowCmentic::getText()
 {
-    QMessageBox msgBox;
-    msgBox.setText(ui->texteSoupconne->toPlainText());
-    msgBox.exec();
     vector<string> contenuTextbox;
     contenuTextbox.push_back(ui->texteOriginal->toPlainText().toLower().toStdString());
     contenuTextbox.push_back(ui->texteSoupconne->toPlainText().toLower().toStdString());
-    //moteurSemantique *ms = new moteurSemantique();
-    //ms.startMoteurSemantique();
+    moteurSemantique *ms = new moteurSemantique();
+    ms->startMoteurSemantique(ui->texteOriginal->toPlainText().toLower().toStdString(),ui->texteSoupconne->toPlainText().toLower().toStdString());
 }
 

@@ -10,7 +10,8 @@ class moteurSemantique
 public:
     moteurSemantique();
     vector< vector<string> > decomposerTexte(std::string texte);
-    void startMoteurSemantique();
+    void startMoteurSemantique(string texteOriginal, string texteDouteux);
+    bool testCopyPaste(string motOriginal, string motDouteux);
 };
 
 #endif // MOTEURSEMANTIQUE_H

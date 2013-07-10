@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <vector>
 #include <iostream>
+#include <QMessageBox>
+#include "ui_windowcmentic.h"
 using namespace std;
 
 moteurSemantique::moteurSemantique()
@@ -71,61 +73,78 @@ vector< vector<string> > moteurSemantique::decomposerTexte(std::string texte)
     return listePhrases;
 }
 
-void moteurSemantique::startMoteurSemantique()
+void moteurSemantique::startMoteurSemantique(string texteOriginal, string texteDouteux)
 {
-        //ALGO SERA DEROULE ICI
-        moteurSemantique ms;
 
-        //deleteDoublonsWord(phraseTest);
 
-        string texteOriginal = "verbes troisieme groupe verbes irreguliers.";
-        string texteSoupconPlagiat = "en font aussi partie verbes irreguliers. Conjuguer des verbes c'est cool.";
-        vector< vector<string> > listeTexteOriginal;
-        vector< vector<string> > listeTexteSoupconPlagiat;
 
-        //Methode pour retirer les mot de liaison : ICI
+    bool estPlagie = false;
 
-        //ms.decomposerTexte("blabla");
-        //
-        listeTexteOriginal=ms.decomposerTexte(texteOriginal);
-        listeTexteSoupconPlagiat = ms.decomposerTexte(texteSoupconPlagiat);
+    estPlagie = testCopyPaste(texteOriginal,texteDouteux);
+    QMessageBox msgBox;
+    msgBox.setText("Le texte analysé s'avère être un plagiat");
+    if(!estPlagie)
+    {
+         msgBox.setText("Ce texte est authentique");
+    }
+    msgBox.exec();
+}
 
-        int nbPlagiatTotal = 0;
+bool moteurSemantique::testCopyPaste(string motOriginal, string motDouteux)
+{
+    //ALGO SERA DEROULE ICI
+    moteurSemantique ms;
+    bool plagiat = false;
+    float scorePlagiat=0.0;
+    int nbMot=0;
 
+    string texteOriginal = motOriginal;
+    string texteSoupconPlagiat = motDouteux;
+    vector< vector<string> > listeTexteOriginal;
+    vector< vector<string> > listeTexteSoupconPlagiat;
+
+    //Methode pour retirer les mot de liaison : ICI
+
+    listeTexteOriginal=ms.decomposerTexte(texteOriginal);
+    listeTexteSoupconPlagiat = ms.decomposerTexte(texteSoupconPlagiat);
+
+    int nbPlagiatTotal = 0;
+
+    //ligne
+    for(size_t i=0; i<listeTexteOriginal.size(); i++)
+    {
         //ligne
-        for(size_t i=0; i<listeTexteOriginal.size(); i++)
+        for(size_t j=0; j<listeTexteSoupconPlagiat.size(); j++)
         {
-            //ligne
-            for(size_t j=0; j<listeTexteSoupconPlagiat.size(); j++)
+            int nbPlagiat = 0;
+            //mot
+            for(size_t k=0; k<listeTexteOriginal[i].size(); k++)
             {
-                int nbPlagiat = 0;
                 //mot
-                for(size_t k=0; k<listeTexteOriginal[i].size(); k++)
+                for(size_t l=0; l<listeTexteSoupconPlagiat[j].size(); l++)
                 {
-                    //mot
-                    for(size_t l=0; l<listeTexteSoupconPlagiat[j].size(); l++)
+                    nbMot++;
+                    if(listeTexteOriginal[i][k] == listeTexteSoupconPlagiat[j][l])
                     {
-                        if(listeTexteOriginal[i][k] == listeTexteSoupconPlagiat[j][l])
-                        {
-                            cout<<"phrase"<<i+1<<"original: "<<listeTexteOriginal[i][k]<<endl;
-                            cout<<"phrase"<<j+1<<"plagiat: "<<listeTexteSoupconPlagiat[j][l]<<endl;
-                            //cout<<"plagiat sur la phrase"<<j+1<<endl;
-                            nbPlagiat++;
-                            nbPlagiatTotal++;
-                        }
-                        else
-                        {
-                            /*cout<<"phrase"<<i+1<<"original: "<<listeTexteOriginal[i][k]<<endl;
-                            cout<<"phrase"<<j+1<<"plagiat: "<<listeTexteSoupconPlagiat[j][l]<<endl;
-                            cout<<"pas de plagiat"<<endl;
-                            cout<<endl;*/
-                        }
+                        cout<<"phrase"<<i+1<<"original: "<<listeTexteOriginal[i][k]<<endl;
+                        cout<<"phrase"<<j+1<<"plagiat: "<<listeTexteSoupconPlagiat[j][l]<<endl;
+                        nbPlagiat++;
+                        nbPlagiatTotal++;
                     }
                 }
-                cout<<"plagiat en ligne"<<j+1<<":"<<nbPlagiat<<endl;
             }
+            cout<<"plagiat en ligne"<<j+1<<":"<<nbPlagiat<<endl;
         }
-        cout<<"Au total:"<<nbPlagiatTotal<<" plagiats ont ete releves."<<endl;
+    }
+    cout<<"Au total:"<<nbPlagiatTotal<<" plagiats ont ete releves."<<endl;
+    scorePlagiat = (float(nbPlagiatTotal)/nbMot)*100;
+    cout<<"Score en % de mot plagié : "<<scorePlagiat<<"%"<<endl;
+
+    if(float(scorePlagiat)>=60.0)
+        plagiat=true;
+
+    return plagiat;
+
 }
 
 
