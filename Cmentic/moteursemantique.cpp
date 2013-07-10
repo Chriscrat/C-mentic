@@ -1,14 +1,16 @@
 #include "moteursemantique.h"
+#include "windowcmentic.h"
 #include <stdexcept>
 #include <vector>
 #include <iostream>
 using namespace std;
 
-MoteurSemantique::MoteurSemantique()
+moteurSemantique::moteurSemantique()
 {
- }
 
-vector< vector<string> > decomposerTexte(string texte)
+}
+
+vector< vector<string> > moteurSemantique::decomposerTexte(std::string texte)
 {
     //DECOMPOSITION DES PHRASES EN VECTOR 2 DIMENSIONS
     //1ERE DIMENSION : LIGNES
@@ -32,7 +34,6 @@ vector< vector<string> > decomposerTexte(string texte)
     //std::string::npos => jusqu'à la fin de la chaine
     //Ici, on décompose les phrases que l'on ajoute à un vector a 2 dimensions
     //Les lignes = phrases, colonne = mot
-
 
     while ((pos = texte.find(delimiter1)) != -1)
     {
@@ -69,4 +70,62 @@ vector< vector<string> > decomposerTexte(string texte)
     //DECOMPOSITION DES PHRASES EN LISTE
     return listePhrases;
 }
+
+void moteurSemantique::startMoteurSemantique()
+{
+        //ALGO SERA DEROULE ICI
+        moteurSemantique ms;
+
+        //deleteDoublonsWord(phraseTest);
+
+        string texteOriginal = "verbes troisieme groupe verbes irreguliers.";
+        string texteSoupconPlagiat = "en font aussi partie verbes irreguliers. Conjuguer des verbes c'est cool.";
+        vector< vector<string> > listeTexteOriginal;
+        vector< vector<string> > listeTexteSoupconPlagiat;
+
+        //Methode pour retirer les mot de liaison : ICI
+
+        //ms.decomposerTexte("blabla");
+        //
+        listeTexteOriginal=ms.decomposerTexte(texteOriginal);
+        listeTexteSoupconPlagiat = ms.decomposerTexte(texteSoupconPlagiat);
+
+        int nbPlagiatTotal = 0;
+
+        //ligne
+        for(size_t i=0; i<listeTexteOriginal.size(); i++)
+        {
+            //ligne
+            for(size_t j=0; j<listeTexteSoupconPlagiat.size(); j++)
+            {
+                int nbPlagiat = 0;
+                //mot
+                for(size_t k=0; k<listeTexteOriginal[i].size(); k++)
+                {
+                    //mot
+                    for(size_t l=0; l<listeTexteSoupconPlagiat[j].size(); l++)
+                    {
+                        if(listeTexteOriginal[i][k] == listeTexteSoupconPlagiat[j][l])
+                        {
+                            cout<<"phrase"<<i+1<<"original: "<<listeTexteOriginal[i][k]<<endl;
+                            cout<<"phrase"<<j+1<<"plagiat: "<<listeTexteSoupconPlagiat[j][l]<<endl;
+                            //cout<<"plagiat sur la phrase"<<j+1<<endl;
+                            nbPlagiat++;
+                            nbPlagiatTotal++;
+                        }
+                        else
+                        {
+                            /*cout<<"phrase"<<i+1<<"original: "<<listeTexteOriginal[i][k]<<endl;
+                            cout<<"phrase"<<j+1<<"plagiat: "<<listeTexteSoupconPlagiat[j][l]<<endl;
+                            cout<<"pas de plagiat"<<endl;
+                            cout<<endl;*/
+                        }
+                    }
+                }
+                cout<<"plagiat en ligne"<<j+1<<":"<<nbPlagiat<<endl;
+            }
+        }
+        cout<<"Au total:"<<nbPlagiatTotal<<" plagiats ont ete releves."<<endl;
+}
+
 

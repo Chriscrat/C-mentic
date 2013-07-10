@@ -1,6 +1,5 @@
 #ifndef WINDOWCMENTIC_H
 #define WINDOWCMENTIC_H
-
 #include <QWidget>
 #include <QString>
 #include <vector>
@@ -19,10 +18,9 @@ class WindowCmentic : public QWidget
 public:
     explicit WindowCmentic(QWidget *parent = 0);
     ~WindowCmentic();
-    void startMoteurSemantique();
 
 public slots:
-    vector<string> getText();
+   void getText();
     
 private:
     Ui::WindowCmentic *ui;

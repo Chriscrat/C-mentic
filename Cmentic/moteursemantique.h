@@ -2,15 +2,15 @@
 #define MOTEURSEMANTIQUE_H
 #include <vector>
 #include <iostream>
+#include "windowcmentic.h"
 
 using namespace std;
-
-class MoteurSemantique
+class moteurSemantique
 {
 public:
-    MoteurSemantique();
-    vector< vector<string> > decomposerTexte(string texte);
-
+    moteurSemantique();
+    vector< vector<string> > decomposerTexte(std::string texte);
+    void startMoteurSemantique();
 };
 
 #endif // MOTEURSEMANTIQUE_H
