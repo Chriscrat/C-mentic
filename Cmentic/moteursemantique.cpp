@@ -1,5 +1,6 @@
 #include "moteursemantique.h"
 #include "windowcmentic.h"
+#include "connexion.h"
 #include <stdexcept>
 #include <vector>
 #include <iostream>
@@ -79,7 +80,7 @@ void moteurSemantique::startMoteurSemantique(string texteOriginal, string texteD
 
 
     bool estPlagie = false;
-
+    Connexion *con = new Connexion();
     estPlagie = testCopyPaste(texteOriginal,texteDouteux);
     QMessageBox msgBox;
     msgBox.setText("Le texte analysé s'avère être un plagiat");
@@ -120,10 +121,9 @@ bool moteurSemantique::testCopyPaste(string motOriginal, string motDouteux)
             //mot
             for(size_t k=0; k<listeTexteOriginal[i].size(); k++)
             {
-                //mot
                 for(size_t l=0; l<listeTexteSoupconPlagiat[j].size(); l++)
                 {
-                    nbMot++;
+                    nbMot=listeTexteSoupconPlagiat[j].size();
                     if(listeTexteOriginal[i][k] == listeTexteSoupconPlagiat[j][l])
                     {
                         cout<<"phrase"<<i+1<<"original: "<<listeTexteOriginal[i][k]<<endl;
@@ -145,6 +145,10 @@ bool moteurSemantique::testCopyPaste(string motOriginal, string motDouteux)
 
     return plagiat;
 
+
 }
 
+bool moteurSemantique::testSynonyme(string motOriginal, string motDouteux)
+{
 
+}

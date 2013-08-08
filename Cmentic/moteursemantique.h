@@ -12,6 +12,7 @@ public:
     vector< vector<string> > decomposerTexte(std::string texte);
     void startMoteurSemantique(string texteOriginal, string texteDouteux);
     bool testCopyPaste(string motOriginal, string motDouteux);
+    bool testSynonyme(string motOriginal, string motDouteux);
 };
 
 #endif // MOTEURSEMANTIQUE_H

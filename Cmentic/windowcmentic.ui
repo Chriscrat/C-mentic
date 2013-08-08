@@ -35,13 +35,6 @@
     <widget class="QPlainTextEdit" name="texteSoupconne"/>
    </item>
    <item>
-    <widget class="QProgressBar" name="loadBarProgress">
-     <property name="value">
-      <number>24</number>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QPushButton" name="btnStart">
      <property name="text">
       <string>Analyser</string>
