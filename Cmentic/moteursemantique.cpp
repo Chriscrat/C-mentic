@@ -70,14 +70,11 @@ vector< vector<string> > moteurSemantique::decomposerTexte(std::string texte)
         posC = pos+2;
         texte = phraseASuivre;
     }
-    //DECOMPOSITION DES PHRASES EN LISTE
     return listePhrases;
 }
 
 void moteurSemantique::startMoteurSemantique(string texteOriginal, string texteDouteux)
 {
-
-
 
     bool estPlagie = false;
     Connexion *con = new Connexion();
@@ -93,7 +90,6 @@ void moteurSemantique::startMoteurSemantique(string texteOriginal, string texteD
 
 bool moteurSemantique::testCopyPaste(string motOriginal, string motDouteux)
 {
-    //ALGO SERA DEROULE ICI
     moteurSemantique ms;
     bool plagiat = false;
     float scorePlagiat=0.0;
@@ -144,8 +140,6 @@ bool moteurSemantique::testCopyPaste(string motOriginal, string motDouteux)
         plagiat=true;
 
     return plagiat;
-
-
 }
 
 bool moteurSemantique::testSynonyme(string motOriginal, string motDouteux)

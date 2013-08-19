@@ -1,4 +1,5 @@
 #include "connexion.h"
+#include <QVector>
 #include <QWidget>
 #include <QString>
 #include <QSqlDatabase>
@@ -22,28 +23,39 @@ Connexion::Connexion()
     if (db.isOpen())
     {
        cout << "Connexion ok" << endl;
-       QString maRequete = "SELECT * FROM groupe";
-       QSqlQuery query;
-       // Execution de la requete
-       if(!query.exec(maRequete))
+       QVector<string> groupList = this->getGroupList();
+       for(int i=0;i<groupList.size();i++)
        {
-           // Generation d'une erreur
-           QSqlError err = query.lastError();
-           QMessageBox::critical(0, "Erreur : ", err.text());
-       }
-       else
-       {
-           while(query.next())
-           {
-               QSqlRecord rec = query.record();
-               const QString id = rec.value("id_groupe").toString();
-               const QString nom = rec.value("nom_groupe").toString();
-               qWarning() << id << nom;
-           }
+           cout << "Groupe a l'indice numero " << i << " : " << groupList[i] << "" << endl;
        }
     }
     else
     {
         cout << "Erreur connexion" << endl;
     }
+}
+
+QVector<string> Connexion::getGroupList()
+{
+    QString maRequete = "SELECT * FROM groupe";
+    QSqlQuery query;
+    QVector<string> groupList;
+    if(!query.exec(maRequete))
+    {
+       // Generation d'une erreur
+       QSqlError err = query.lastError();
+       QMessageBox::critical(0, "Erreur : ", err.text());
+    }
+    else
+    {
+       while(query.next())
+       {
+            QSqlRecord rec = query.record();
+            const QString id = rec.value("id_groupe").toString();
+            const QString nom = rec.value("nom_groupe").toString();
+            //qWarning() << id << nom;
+            groupList.append(nom.toStdString());
+       }
+    }
+    return groupList;
 }

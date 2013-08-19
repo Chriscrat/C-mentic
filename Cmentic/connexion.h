@@ -4,11 +4,15 @@
 #include <QString>
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QVector>
+
+using namespace std;
 
 class Connexion
 {
 public:
     Connexion();
+    QVector<string> getGroupList();
 
 private:
     QSqlDatabase db;
