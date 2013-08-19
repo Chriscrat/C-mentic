@@ -22,7 +22,7 @@ Connexion::Connexion()
     if (db.isOpen())
     {
        cout << "Connexion ok" << endl;
-       QString maRequete = "SELECT COUNT (*) FROM groupe";
+       QString maRequete = "SELECT * FROM groupe";
        QSqlQuery query;
        // Execution de la requete
        if(!query.exec(maRequete))
@@ -33,8 +33,13 @@ Connexion::Connexion()
        }
        else
        {
-           int nb = query.value(0).toInt();
-           qDebug() << "Nombre de groupe dans la base : " << QString::number(nb);
+           while(query.next())
+           {
+               QSqlRecord rec = query.record();
+               const QString id = rec.value("id_groupe").toString();
+               const QString nom = rec.value("nom_groupe").toString();
+               qWarning() << id << nom;
+           }
        }
     }
     else
