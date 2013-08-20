@@ -6,11 +6,13 @@
 #include <iostream>
 
 using namespace  std;
+
 WindowCmentic::WindowCmentic(QWidget *parent) : QWidget(parent),ui(new Ui::WindowCmentic)
 {
     ui->setupUi(this);
+
     connect(ui->btnQuit, SIGNAL(clicked()), qApp, SLOT(quit()));
-    //>Lors d'un clic sur btnStart, on appelle mthd afficher()
+    //Lors d'un clic sur btnStart, on appelle la méthode afficher()
     connect(ui->btnStart, SIGNAL(clicked()), this, SLOT(getText()));
 }
 
@@ -25,6 +27,7 @@ void WindowCmentic::getText()
     contenuTextbox.push_back(ui->texteOriginal->toPlainText().toLower().toStdString());
     contenuTextbox.push_back(ui->texteSoupconne->toPlainText().toLower().toStdString());
     moteurSemantique *ms = new moteurSemantique();
-    ms->startMoteurSemantique(ui->texteSoupconne->toPlainText().toLower().toStdString(),ui->texteOriginal->toPlainText().toLower().toStdString());
+    ms->startMoteurSemantique(ui->texteOriginal,  ui->texteSoupconne);
 }
+
 

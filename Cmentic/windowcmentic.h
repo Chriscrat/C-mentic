@@ -7,23 +7,25 @@
 
 using namespace std;
 
-namespace Ui {
-class WindowCmentic;
+namespace Ui
+{
+    class WindowCmentic;
 }
 
 class WindowCmentic : public QWidget
 {
     Q_OBJECT
     
-public:
-    explicit WindowCmentic(QWidget *parent = 0);
-    ~WindowCmentic();
+    public:
+        explicit WindowCmentic(QWidget *parent = 0);
+        ~WindowCmentic();
 
-public slots:
-   void getText();
-    
-private:
-    Ui::WindowCmentic *ui;
+    public slots:
+       void getText();
+
+
+    private:
+        Ui::WindowCmentic *ui;
 
 };
 

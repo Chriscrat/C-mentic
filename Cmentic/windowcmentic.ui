@@ -22,7 +22,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QPlainTextEdit" name="texteOriginal"/>
+    <widget class="QTextEdit" name="texteSoupconne"/>
    </item>
    <item>
     <widget class="QLabel" name="label_2">
@@ -32,7 +32,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QPlainTextEdit" name="texteSoupconne"/>
+    <widget class="QTextEdit" name="texteOriginal"/>
    </item>
    <item>
     <widget class="QPushButton" name="btnStart">

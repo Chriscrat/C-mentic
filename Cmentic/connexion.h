@@ -12,6 +12,7 @@ class Connexion
 {
 public:
     Connexion();
+    void disconnect();
     QVector<string> getGroupList();
 
 private:

@@ -23,16 +23,21 @@ Connexion::Connexion()
     if (db.isOpen())
     {
        cout << "Connexion ok" << endl;
-       QVector<string> groupList = this->getGroupList();
+       /*QVector<string> groupList = this->getGroupList();
        for(int i=0;i<groupList.size();i++)
        {
            cout << "Groupe a l'indice numero " << i << " : " << groupList[i] << "" << endl;
-       }
+       }*/
     }
     else
     {
         cout << "Erreur connexion" << endl;
     }
+}
+
+void Connexion::disconnect()
+{
+    db.close();
 }
 
 QVector<string> Connexion::getGroupList()

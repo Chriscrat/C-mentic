@@ -15,8 +15,8 @@
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
-#include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -27,9 +27,9 @@ class Ui_WindowCmentic
 public:
     QVBoxLayout *verticalLayout;
     QLabel *label;
-    QPlainTextEdit *texteOriginal;
+    QTextEdit *texteSoupconne;
     QLabel *label_2;
-    QPlainTextEdit *texteSoupconne;
+    QTextEdit *texteOriginal;
     QPushButton *btnStart;
     QPushButton *btnQuit;
 
@@ -47,20 +47,20 @@ public:
 
         verticalLayout->addWidget(label);
 
-        texteOriginal = new QPlainTextEdit(WindowCmentic);
-        texteOriginal->setObjectName(QStringLiteral("texteOriginal"));
+        texteSoupconne = new QTextEdit(WindowCmentic);
+        texteSoupconne->setObjectName(QStringLiteral("texteSoupconne"));
 
-        verticalLayout->addWidget(texteOriginal);
+        verticalLayout->addWidget(texteSoupconne);
 
         label_2 = new QLabel(WindowCmentic);
         label_2->setObjectName(QStringLiteral("label_2"));
 
         verticalLayout->addWidget(label_2);
 
-        texteSoupconne = new QPlainTextEdit(WindowCmentic);
-        texteSoupconne->setObjectName(QStringLiteral("texteSoupconne"));
+        texteOriginal = new QTextEdit(WindowCmentic);
+        texteOriginal->setObjectName(QStringLiteral("texteOriginal"));
 
-        verticalLayout->addWidget(texteSoupconne);
+        verticalLayout->addWidget(texteOriginal);
 
         btnStart = new QPushButton(WindowCmentic);
         btnStart->setObjectName(QStringLiteral("btnStart"));
