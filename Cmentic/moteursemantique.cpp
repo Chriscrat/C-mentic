@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 #include <QMessageBox>
+#include <boost/algorithm/string/predicate.hpp>
 using namespace std;
 
 
@@ -242,9 +243,9 @@ float moteurSemantique::testSynonyme(QTextEdit *&TexteOriginal,QTextEdit *&Texte
     QString result = texteSoupconPlagiat.c_str();
     TexteSoupcon->clear();
     TexteSoupcon->insertHtml(result);
-    return scorePlagiat;
+    return scorePlagiat;*/
 
-    return 60.0f;*/
+    return 60.0f;
 }
 
 float moteurSemantique::testVerbe(QTextEdit *&TexteOriginal,QTextEdit *&TexteSoupcon)
@@ -260,4 +261,39 @@ float moteurSemantique::testVerbe(QTextEdit *&TexteOriginal,QTextEdit *&TexteSou
     //test
 
     return 60.0f;
+}
+
+string moteurSemantique::getBaseVerbe(string mot)
+{
+    //Partie SQL a réaliser par Florian
+    //instance Connexion
+    //SQL : select base from verbe;
+
+    //Placer le retour SQL dans basesVerbes
+    //QVector<string> basesVerbes = retour SQL;
+
+    QVector<string> basesVerbes;
+    basesVerbes.append("interess");
+    basesVerbes.append("programm");
+    basesVerbes.append("utilis");
+
+    bool trouve = false;
+    string baseVerbe;
+
+    for(int i=0; i<basesVerbes.size();i++)
+    {
+        if(boost::algorithm::contains(mot, basesVerbes[i]))
+        {
+            trouve = true;
+            baseVerbe = basesVerbes[i];
+        }
+    }
+       return baseVerbe;
+}
+
+string moteurSemantique::getTerminaisonVerbe(string mot)
+{
+    string baseVerbe = getBaseVerbe(mot);
+    string terminaison = mot.substr(baseVerbe.length(),(mot.length()-baseVerbe.length()));
+    return terminaison;
 }

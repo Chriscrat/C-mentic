@@ -16,6 +16,8 @@ class moteurSemantique
         float testCopyPaste(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux);
         float testSynonyme(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux);
         float testVerbe(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux);
+        string getBaseVerbe(string mot);
+        string getTerminaisonVerbe(string mot);
 
 };
 
