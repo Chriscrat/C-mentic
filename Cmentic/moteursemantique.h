@@ -16,6 +16,7 @@ class moteurSemantique
         float testCopyPaste(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux);
         float testSynonyme(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux);
         float testVerbe(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux);
+
 };
 
 #endif // MOTEURSEMANTIQUE_H

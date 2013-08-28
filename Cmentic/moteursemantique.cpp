@@ -15,6 +15,36 @@ moteurSemantique::moteurSemantique()
     con = new Connexion();
 }
 
+void moteurSemantique::startMoteurSemantique(QTextEdit *&TexteOriginal,QTextEdit *&TexteSoupcon)
+{
+    bool estPlagie=false;
+    float scoreCopyPaste, scoreTestSynonyme, scoreTestVerbe;
+    scoreCopyPaste = testCopyPaste(TexteOriginal,TexteSoupcon);
+    scoreTestSynonyme = testSynonyme(TexteOriginal,TexteSoupcon);
+    scoreTestVerbe = testVerbe(TexteOriginal,TexteSoupcon);
+
+
+    float scorePlagiat = (scoreCopyPaste + scoreTestSynonyme + scoreTestVerbe) / 3;
+
+    cout << "Recapitulatif des scores de plagiat " << endl;
+    cout << " - Par copier/coller : " << scoreCopyPaste << "%" << endl;
+    cout << " - Par emploi de synonyme : " << scoreTestSynonyme << "%" << endl;
+    cout << " - Par changement des temps : " << scoreTestVerbe << "%" << endl;
+    cout << "Ce qui équivaut à un total de " << scorePlagiat << "% de texte susceptible d'etre plagie" << endl;
+
+
+    if(scorePlagiat>60)
+        estPlagie=true;
+
+    QMessageBox msgBox;
+    msgBox.setText("Le texte analyse s'avere être un plagiat");
+    if(!estPlagie)
+    {
+         msgBox.setText("Ce texte est authentique");
+    }
+    //msgBox.exec();
+}
+
 vector< vector<string> > moteurSemantique::decomposerTexte(std::string texte)
 {
     //DECOMPOSITION DES PHRASES EN VECTOR 2 DIMENSIONS
@@ -75,44 +105,14 @@ vector< vector<string> > moteurSemantique::decomposerTexte(std::string texte)
     return listePhrases;
 }
 
-void moteurSemantique::startMoteurSemantique(QTextEdit *&TextEditOriginal,QTextEdit *&TextEditSoupcon)
-{
-    bool estPlagie=false;
-    float scoreCopyPaste, scoreTestSynonyme, scoreTestVerbe;
-    scoreCopyPaste = testCopyPaste(TextEditOriginal,TextEditSoupcon);
-    scoreTestSynonyme = testSynonyme(TextEditOriginal,TextEditSoupcon);
-    scoreTestVerbe = testVerbe(TextEditOriginal,TextEditSoupcon);
-
-
-    float scorePlagiat = (scoreCopyPaste + scoreTestSynonyme + scoreTestVerbe) / 3;
-
-    cout << "Recapitulatif des scores de plagiat " << endl;
-    cout << " - Par copier/coller : " << scoreCopyPaste << "%" << endl;
-    cout << " - Par emploi de synonyme : " << scoreTestSynonyme << "%" << endl;
-    cout << " - Par changement des temps : " << scoreTestVerbe << "%" << endl;
-    cout << "Ce qui équivaut à un total de " << scorePlagiat << "% de texte susceptible d'etre plagie" << endl;
-
-
-    if(scorePlagiat>60)
-        estPlagie=true;
-
-    QMessageBox msgBox;
-    msgBox.setText("Le texte analyse s'avere être un plagiat");
-    if(!estPlagie)
-    {
-         msgBox.setText("Ce texte est authentique");
-    }
-    //msgBox.exec();
-}
-
-float moteurSemantique::testCopyPaste(QTextEdit *&TextEditOriginal,QTextEdit *&TextEditSoupcon)
+float moteurSemantique::testCopyPaste(QTextEdit *&TexteOriginal,QTextEdit *&TexteSoupcon)
 {
     float scorePlagiat=0.0;
     int nbMot=0;
     string expression;
     size_t position=0;
-    string texteOriginal = TextEditOriginal->toPlainText().toLower().toStdString();;
-    string texteSoupconPlagiat = TextEditSoupcon->toPlainText().toLower().toStdString();
+    string texteOriginal = TexteOriginal->toPlainText().toLower().toStdString();;
+    string texteSoupconPlagiat = TexteSoupcon->toPlainText().toLower().toStdString();
     string BeginHtmlColor ="<font color=\"red\">";
     string EndHtmlColor ="</font>";
     vector< vector<string> > listeTexteOriginal;
@@ -124,7 +124,8 @@ float moteurSemantique::testCopyPaste(QTextEdit *&TextEditOriginal,QTextEdit *&T
     listeTexteSoupconPlagiat = decomposerTexte(texteSoupconPlagiat);
 
     int nbPlagiatTotal = 0;
-
+    cout<<"Nombre de lignes texte original:"<<listeTexteOriginal.size()<<endl;
+    cout<<"Nombre de lignes texte original:"<<listeTexteSoupconPlagiat.size()<<endl;
     //ligne
     for(size_t i=0; i<listeTexteOriginal.size(); i++)
     {
@@ -171,22 +172,23 @@ float moteurSemantique::testCopyPaste(QTextEdit *&TextEditOriginal,QTextEdit *&T
         }
     }
     cout<<"Au total:"<<nbPlagiatTotal<<" plagiats ont ete releves."<<endl;
-    scorePlagiat = (float(nbPlagiatTotal)/nbMot)*100;
+    //scorePlagiat = (float(nbPlagiatTotal)/nbMot)*100;
+    scorePlagiat = (float(nbPlagiatTotal)/listeTexteOriginal.size())*100;
     cout<<"Score en % de mot plagie : "<<scorePlagiat<<"%"<<endl;
 
-    TextEditSoupcon->clear();
-    TextEditSoupcon->setTextColor(QColor("black"));
-    TextEditSoupcon->insertHtml(result);
+    TexteSoupcon->clear();
+    TexteSoupcon->setTextColor(QColor("black"));
+    TexteSoupcon->insertHtml(result);
     return scorePlagiat;
 }
 
-float moteurSemantique::testSynonyme(QTextEdit *&TextEditOriginal,QTextEdit *&TextEditSoupcon)
+float moteurSemantique::testSynonyme(QTextEdit *&TexteOriginal,QTextEdit *&TexteSoupcon)
 {
     /*float scorePlagiat=0.0;
     int nbMot=0;
     int position=0;
-    string texteOriginal = TextEditOriginal->toPlainText().toLower().toStdString();;
-    string texteSoupconPlagiat = TextEditSoupcon->toPlainText().toLower().toStdString();
+    string texteOriginal = TexteOriginal->toPlainText().toLower().toStdString();;
+    string texteSoupconPlagiat = TexteSoupcon->toPlainText().toLower().toStdString();
     string BeginHtmlColor ="<font color=\"red\">";
     string EndHtmlColor ="</font>";
     vector< vector<string> > listeTexteOriginal;
@@ -238,14 +240,24 @@ float moteurSemantique::testSynonyme(QTextEdit *&TextEditOriginal,QTextEdit *&Te
     cout<<"Score en % de mot plagie : "<<scorePlagiat<<"%"<<endl;
 
     QString result = texteSoupconPlagiat.c_str();
-    TextEditSoupcon->clear();
-    TextEditSoupcon->insertHtml(result);
+    TexteSoupcon->clear();
+    TexteSoupcon->insertHtml(result);
     return scorePlagiat;
 
     return 60.0f;*/
 }
 
-float moteurSemantique::testVerbe(QTextEdit *&TextEditOriginal,QTextEdit *&TextEditSoupcon)
+float moteurSemantique::testVerbe(QTextEdit *&TexteOriginal,QTextEdit *&TexteSoupcon)
 {
+    /*Connexion con;
+    QVector<string> groupList = con.getGroupList();
+    cout<<"Parcours de la liste groupList:"<<endl;
+    for(size_t i=0; i<groupList.size();i++)
+    {
+        cout<<groupList[i]<<endl;
+    }*/
+
+    //test
+
     return 60.0f;
 }
