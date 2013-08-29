@@ -8,6 +8,7 @@
 #include <iostream>
 #include <QtCore>
 #include <QtSql>
+
 using namespace std;
 
 
@@ -22,7 +23,7 @@ Connexion::Connexion()
 
     if (db.isOpen())
     {
-       cout << "Connexion ok" << endl;
+       cout << "Connexion : ok" << endl;
        /*QVector<string> groupList = this->getGroupList();
        for(int i=0;i<groupList.size();i++)
        {
@@ -31,7 +32,7 @@ Connexion::Connexion()
     }
     else
     {
-        cout << "Erreur connexion" << endl;
+        cout << "Erreur de connexion" << endl;
     }
 }
 
@@ -49,7 +50,7 @@ QVector<string> Connexion::getGroupList()
     {
        // Generation d'une erreur
        QSqlError err = query.lastError();
-       QMessageBox::critical(0, "Erreur : ", err.text());
+       QMessageBox::critical(0, "Erreur methode 'getGroupList()' : ", err.text());
     }
     else
     {
@@ -63,4 +64,66 @@ QVector<string> Connexion::getGroupList()
        }
     }
     return groupList;
+}
+
+bool Connexion::isSynonyme(string motDouteux, string motOrigine)
+{
+    int idMotOri = getIdMot(motOrigine);
+    int idMotDou = getIdMot(motDouteux);
+    int idSynonymeDou = getIdSynonyme(idMotDou);
+    int idSynonymeOri = getIdSynonyme(idMotOri);
+
+    cout << "Mot douteux : " << motDouteux << " - ID mot : " << idMotDou << " - ID synonyme : " << idSynonymeDou << endl;
+    cout << "Mot d'origine : " << motOrigine << " - ID mot : " << idMotOri << " - ID synonyme : " << idSynonymeOri << endl;
+
+    if((idSynonymeDou==idSynonymeOri) && (idSynonymeDou>0 && idSynonymeOri>0))
+        return true;
+    return false;
+}
+
+int Connexion::getIdMot(string mot)
+{
+    QSqlQuery query;
+    QString maRequete= QString::fromStdString("SELECT id_mot FROM mot WHERE mot LIKE '%"+mot+"%'");
+    cout << maRequete.toStdString() << endl;
+    int id=0;
+    if(!query.exec(maRequete))
+    {
+       // Generation d'une erreur
+       QSqlError err = query.lastError();
+       QMessageBox::critical(0, "Erreur methode 'getIdMot()' : ", err.text());
+    }
+    else
+    {
+       while(query.next())
+       {
+            QSqlRecord rec = query.record();
+            id = rec.value("id_mot").toInt();
+            break;
+       }
+    }
+    return id;
+}
+
+int Connexion::getIdSynonyme(int idMot)
+{
+    QSqlQuery* query = new QSqlQuery();
+    query->prepare("SELECT id_synonyme FROM synonymeDe WHERE id_mot =?");
+    query->addBindValue(idMot);
+    int id=0;
+    if(!query->exec())
+    {
+       // Generation d'une erreur
+       QSqlError err = query->lastError();
+       QMessageBox::critical(0, "Erreur methode 'getIdSynonyme()' : ", err.text());
+    }
+    else
+    {
+       while(query->next())
+       {
+            QSqlRecord rec = query->record();
+            id = rec.value("id_synonyme").toInt();
+       }
+    }
+    return id;
 }

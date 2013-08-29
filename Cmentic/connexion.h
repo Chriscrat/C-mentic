@@ -14,6 +14,9 @@ public:
     Connexion();
     void disconnect();
     QVector<string> getGroupList();
+    bool isSynonyme(string motDouteux, string motOrigine);
+    int getIdMot(string mot);
+    int getIdSynonyme(int idMot);
 
 private:
     QSqlDatabase db;
