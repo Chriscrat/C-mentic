@@ -24,11 +24,6 @@ Connexion::Connexion()
     if (db.isOpen())
     {
        cout << "Connexion : ok" << endl;
-       /*QVector<string> groupList = this->getGroupList();
-       for(int i=0;i<groupList.size();i++)
-       {
-           cout << "Groupe a l'indice numero " << i << " : " << groupList[i] << "" << endl;
-       }*/
     }
     else
     {
@@ -57,7 +52,7 @@ QVector<string> Connexion::getGroupList()
        while(query.next())
        {
             QSqlRecord rec = query.record();
-            const QString id = rec.value("id_groupe").toString();
+            //const QString id = rec.value("id_groupe").toString();
             const QString nom = rec.value("nom_groupe").toString();
             //qWarning() << id << nom;
             groupList.append(nom.toStdString());
@@ -85,7 +80,7 @@ int Connexion::getIdMot(string mot)
 {
     QSqlQuery query;
     QString maRequete= QString::fromStdString("SELECT id_mot FROM mot WHERE mot LIKE '%"+mot+"%'");
-    cout << maRequete.toStdString() << endl;
+    //cout << maRequete.toStdString() << endl;
     int id=0;
     if(!query.exec(maRequete))
     {

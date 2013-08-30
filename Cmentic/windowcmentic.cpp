@@ -25,7 +25,7 @@ void WindowCmentic::getText()
     contenuTextbox.push_back(ui->texteOriginal->toPlainText().toLower().toStdString());
     contenuTextbox.push_back(ui->texteSoupconne->toPlainText().toLower().toStdString());
     moteurSemantique *ms = new moteurSemantique();
-    ms->startMoteurSemantique(ui->texteOriginal,  ui->texteSoupconne);
+    ms->startMoteurSemantique(ui->texteOriginal,  ui->texteSoupconne, ui->texteResult, ui->doubleSpinBox, ui->scoreCP, ui->scoreS, ui->scoreV, ui->scoreT);
 }
 
 

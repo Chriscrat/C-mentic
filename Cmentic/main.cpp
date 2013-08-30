@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <qtextcodec.h>
 #include <QTextCodec>
 using namespace std;
 

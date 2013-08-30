@@ -4,7 +4,9 @@
 #include <iostream>
 #include "windowcmentic.h"
 #include "connexion.h"
-#include "QTextEdit"
+#include <QTextEdit>
+#include <QLabel>
+#include <QSpinBox>
 using namespace std;
 class moteurSemantique
 {
@@ -12,7 +14,7 @@ class moteurSemantique
         Connexion *con;
         moteurSemantique();
         vector< vector<string> > decomposerTexte(std::string texte);
-        void startMoteurSemantique(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux);
+        void startMoteurSemantique(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux, QTextEdit *&texteResult, QDoubleSpinBox *&texteSeuil, QLabel *&scoreCP, QLabel *&scoreS,QLabel *&scoreV, QLabel *&scoreT);
         float testCopyPaste(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux);
         float testSynonyme(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux);
         float testVerbe(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux);

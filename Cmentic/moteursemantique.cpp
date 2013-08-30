@@ -24,7 +24,6 @@ vector< vector<string> > moteurSemantique::decomposerTexte(std::string texte)
     //2EME DIMENSION : MOT
 
     string delimiter1 = ".";
-    string delimiter2 = ".";
     string delimiter3 = " ";
     string token0;
     string token1;
@@ -77,7 +76,7 @@ vector< vector<string> > moteurSemantique::decomposerTexte(std::string texte)
     return listePhrases;
 }
 
-void moteurSemantique::startMoteurSemantique(QTextEdit *&TextEditOriginal,QTextEdit *&TextEditSoupcon)
+void moteurSemantique::startMoteurSemantique(QTextEdit *&TextEditOriginal,QTextEdit *&TextEditSoupcon, QTextEdit *&texteResult, QDoubleSpinBox *&seuil, QLabel *&scoreCP, QLabel *&scoreS, QLabel *&scoreV, QLabel *&scoreT)
 {
     bool estPlagie=false;
     float scoreCopyPaste, scoreTestSynonyme, scoreTestVerbe;
@@ -85,19 +84,28 @@ void moteurSemantique::startMoteurSemantique(QTextEdit *&TextEditOriginal,QTextE
     scoreTestSynonyme = testSynonyme(TextEditOriginal,TextEditSoupcon);
     scoreTestVerbe = testVerbe(TextEditOriginal,TextEditSoupcon);
 
-
-
+    double seuilPlagiat = seuil->value();
     float scorePlagiat = (scoreCopyPaste + scoreTestSynonyme + scoreTestVerbe) / 3;
 
-    /*cout << "Recapitulatif des scores de plagiat " << endl;
+    cout << "Recapitulatif des scores de plagiat " << endl;
     cout << " - Par copier/coller : " << scoreCopyPaste << "%" << endl;
     cout << " - Par emploi de synonyme : " << scoreTestSynonyme << "%" << endl;
     cout << " - Par changement des temps : " << scoreTestVerbe << "%" << endl;
-    cout << "Ce qui équivaut à un total de " << scorePlagiat << "% de texte susceptible d'etre plagie" << endl;*/
+    cout << "Ce qui équivaut à un total de " << scorePlagiat << "% de texte susceptible d'etre plagie" << endl;
 
-    colorPlagiat(TextEditSoupcon);
+    QString sCP, sS, sV, sT;
+    sCP.setNum(scoreCopyPaste,'f');
+    sS.setNum(scoreTestSynonyme,'f');
+    sV.setNum(scoreTestVerbe,'f');
+    sT.setNum(scorePlagiat,'f');
 
-    if(scorePlagiat>60)
+    scoreCP->setText(sCP+"%");
+    scoreS->setText(sS+"%");
+    scoreV->setText(sV+"%");
+    scoreT->setText(sT+"%");
+    colorPlagiat(texteResult);
+
+    if(scorePlagiat>seuilPlagiat)
         estPlagie=true;
 
     QMessageBox msgBox;
@@ -106,22 +114,22 @@ void moteurSemantique::startMoteurSemantique(QTextEdit *&TextEditOriginal,QTextE
     {
          msgBox.setText("Ce texte est authentique");
     }
-    //msgBox.exec();
+    msgBox.exec();
 }
 
 float moteurSemantique::testCopyPaste(QTextEdit *&TextEditOriginal,QTextEdit *&TextEditSoupcon)
 {
     float scorePlagiat=0.0;
     int nbMot=0;
-    string texteOriginal = TextEditOriginal->toPlainText().toLower().toStdString();;
+    string texteOriginal = TextEditOriginal->toPlainText().toLower().toStdString();
     string texteSoupconPlagiat = TextEditSoupcon->toPlainText().toLower().toStdString();
     vector< vector<string> > listeTexteOriginal;
     vector< vector<string> > listeTexteSoupconPlagiat;    
-    result = texteSoupconPlagiat.c_str();
 
     //Methode pour retirer les mot de liaison : ICI
     listeTexteOriginal= decomposerTexte(texteOriginal);
     listeTexteSoupconPlagiat = decomposerTexte(texteSoupconPlagiat);
+    result = texteSoupconPlagiat.c_str();
 
     int nbPlagiatTotal = 0;
 
@@ -140,24 +148,18 @@ float moteurSemantique::testCopyPaste(QTextEdit *&TextEditOriginal,QTextEdit *&T
                     nbMot=listeTexteSoupconPlagiat[j].size();
                     if(listeTexteOriginal[i][k] == listeTexteSoupconPlagiat[j][l])
                     {
-                        //cout<<"phrase "<<i+1<<" original : " << listeTexteOriginal[i][k]<<endl;
-                        //cout<<"phrase "<<j+1<<" plagiat : " << listeTexteSoupconPlagiat[j][l]<<endl;
-
                         nbPlagiat++;
                         nbPlagiatTotal++;
-
                     }
                 }
                 QString match = QString::fromStdString(listeTexteOriginal[i][k]);
+                cout << match.toStdString() << endl;
                 result = result.replace(match,"<r> "+QString::fromStdString(listeTexteOriginal[i][k])+"</r>");
             }
         }
     }
     cout << " Rendu après traitement : " << result.toStdString() << endl;
     scorePlagiat = (float(nbPlagiatTotal)/nbMot)*100;
-    TextEditSoupcon->clear();
-    TextEditSoupcon->setTextColor(QColor("black"));
-    TextEditSoupcon->insertHtml(result);
     return scorePlagiat;
 }
 
@@ -169,7 +171,6 @@ float moteurSemantique::testSynonyme(QTextEdit *&TextEditOriginal,QTextEdit *&Te
     string texteSoupconPlagiat = result.toStdString();
     vector< vector<string> > listeTexteOriginal;
     vector< vector<string> > listeTexteSoupconPlagiat;
-    QString result = texteSoupconPlagiat.c_str();
 
     //Methode pour retirer les mot de liaison : ICI
     listeTexteOriginal= decomposerTexte(texteOriginal);
@@ -192,23 +193,16 @@ float moteurSemantique::testSynonyme(QTextEdit *&TextEditOriginal,QTextEdit *&Te
                     nbMot=listeTexteSoupconPlagiat[j].size();
                     if(con->isSynonyme(listeTexteSoupconPlagiat[j][l],listeTexteOriginal[i][k]))
                     {
-                        cout<<"Le mot  "<< listeTexteSoupconPlagiat[j][l] <<" est synonyme de : " << listeTexteOriginal[i][k] << endl;
                         QString match = QString::fromStdString(listeTexteSoupconPlagiat[j][l]);
                         result = result.replace(match,"<bl> "+QString::fromStdString(listeTexteSoupconPlagiat[j][l])+"</bl>");
                         nbPlagiat++;
                         nbPlagiatTotal++;
                     }
                 }
-
             }
         }
     }
-    cout << " Rendu après traitement : " << result.toStdString() << endl;
     scorePlagiat = (float(nbPlagiatTotal)/nbMot)*100;
-    cout<<"Score en % de mot plagie : "<<scorePlagiat<<"%"<<endl;
-    TextEditSoupcon->clear();
-    TextEditSoupcon->setTextColor(QColor("black"));
-    TextEditSoupcon->insertPlainText(result);
     cout << TextEditSoupcon->toPlainText().toLower().toStdString() << endl;
     return scorePlagiat;
 }
@@ -220,13 +214,13 @@ float moteurSemantique::testVerbe(QTextEdit *&TextEditOriginal,QTextEdit *&TextE
 
 void moteurSemantique::colorPlagiat(QTextEdit *&Text)
 {
-    QString texte = Text->toPlainText();
-    texte = texte.replace("<bl> ","<font color='blue'>");
-    texte = texte.replace("<r> ","<font color='red'>");
-    texte = texte.replace("</r> ","</font> ");
-    texte = texte.replace("</bl> ","</font> ");
+    result = result.replace("<bl> ","<font color='blue'>");
+    result = result.replace("<r> ","<font color='red'>");
+    result = result.replace("</r> ","</font> ");
+    result = result.replace("</bl> ","</font> ");
+    cout << result.toStdString() << endl;
     Text->clear();
     Text->setTextColor(QColor("black"));
-    Text->insertHtml(texte);
+    Text->insertHtml(result);
 
 }
