@@ -191,13 +191,16 @@ float moteurSemantique::testSynonyme(QTextEdit *&TextEditOriginal,QTextEdit *&Te
                 for(size_t l=0; l<listeTexteSoupconPlagiat[j].size(); l++)
                 {
                     nbMot=listeTexteSoupconPlagiat[j].size();
-                    if(con->isSynonyme(listeTexteSoupconPlagiat[j][l],listeTexteOriginal[i][k]))
+                    /*
+                     * FCO 221013 : isSynonyme n'existe plus, remplacer par getSynonymes puis tester chaque possibilitée
+                     *
+                     *if(con->isSynonyme(listeTexteSoupconPlagiat[j][l],listeTexteOriginal[i][k]))
                     {
                         QString match = QString::fromStdString(listeTexteSoupconPlagiat[j][l]);
                         result = result.replace(match,"<bl> "+QString::fromStdString(listeTexteSoupconPlagiat[j][l])+"</bl>");
                         nbPlagiat++;
                         nbPlagiatTotal++;
-                    }
+                    }*/
                 }
             }
         }

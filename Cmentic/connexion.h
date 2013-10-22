@@ -13,10 +13,13 @@ class Connexion
 public:
     Connexion();
     void disconnect();
-    QVector<string> getGroupList();
-    bool isSynonyme(string motDouteux, string motOrigine);
-    int getIdMot(string mot);
-    int getIdSynonyme(int idMot);
+
+    QVector<string> getSynonymes(string mot);
+    QVector<string> getTerminaisonsPossibles();
+    QVector<string> getConjugaisonsIrregulier(string mot);
+    QVector<string> getConjugaisons(string mot);
+    QVector<string> getMotLiaison();
+
 
 private:
     QSqlDatabase db;

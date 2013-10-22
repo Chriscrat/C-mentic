@@ -3,7 +3,6 @@
 #include <QWidget>
 #include <QString>
 #include <vector>
-#include <moteursemantique.h>
 
 using namespace std;
 

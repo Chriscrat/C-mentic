@@ -1,7 +1,7 @@
 -- Renvoi la liste des terminaison possibles
 -- Si aucunes terminaisons ne corresponds, essayer le mot entier en tant que verbe irrégulier
 
-SELECT terminaison.1singulier, terminaison.2singulier, terminaison.3singulier, terminaison.1pluriel, terminaison.2pluriel, terminaison.3pluriel
+SELECT terminaison.n1singulier, terminaison.n2singulier, terminaison.n3singulier, terminaison.n1pluriel, terminaison.n2pluriel, terminaison.n3pluriel
 FROM groupetemps, terminaison
 WHERE groupetemps.id_terminaison = terminaison.id_terminaison
 
@@ -9,7 +9,7 @@ WHERE groupetemps.id_terminaison = terminaison.id_terminaison
 -- Renvoi les conjugaison pour un verbe irrégulier
 -- Si retourne 0 enregistrement, alors ce n'est pas un verbe
 
-SELECT irregulier.id_temps, terminaison.1singulier, terminaison.2singulier, terminaison.3singulier, terminaison.1pluriel, terminaison.2pluriel, terminaison.3pluriel
+SELECT irregulier.id_temps, terminaison.n1singulier, terminaison.n2singulier, terminaison.n3singulier, terminaison.n1pluriel, terminaison.n2pluriel, terminaison.n3pluriel
 FROM irregulier, terminaison
 WHERE irregulier.id_terminaison = terminaison.id_terminaison
 AND irregulier.id_verbe = (SELECT DISTINCT irregulier.id_verbe
@@ -17,17 +17,17 @@ AND irregulier.id_verbe = (SELECT DISTINCT irregulier.id_verbe
 						   WHERE irregulier.id_terminaison in (SELECT id_terminaison
 															   FROM terminaison
 															   WHERE
-															   (1singulier = 'verbeirregulier'
-															   OR 2singulier = 'verbeirregulier'
-															   OR 3singulier = 'verbeirregulier'
-															   OR 1pluriel = 'verbeirregulier'
-															   OR 2pluriel = 'verbeirregulier'
-															   OR 3pluriel = 'verbeirregulier')))
+															   (n1singulier = 'verbeirregulier'
+															   OR n2singulier = 'verbeirregulier'
+															   OR n3singulier = 'verbeirregulier'
+															   OR n1pluriel = 'verbeirregulier'
+															   OR n2pluriel = 'verbeirregulier'
+															   OR n3pluriel = 'verbeirregulier')))
 
 
 -- Renvoi les conjugaisons pour une base donnée
 
-SELECT groupetemps.id_temps, terminaison.1singulier, terminaison.2singulier, terminaison.3singulier, terminaison.1pluriel, terminaison.2pluriel, terminaison.3pluriel
+SELECT groupetemps.id_temps, terminaison.n1singulier, terminaison.n2singulier, terminaison.n3singulier, terminaison.n1pluriel, terminaison.n2pluriel, terminaison.n3pluriel
 FROM verbe, groupetemps, terminaison
 WHERE verbe.id_groupe = groupetemps.id_groupe
 AND groupetemps.id_terminaison = terminaison.id_terminaison
