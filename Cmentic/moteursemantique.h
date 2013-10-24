@@ -14,11 +14,18 @@ class moteurSemantique
         Connexion *con;
         moteurSemantique();
         vector< vector<string> > decomposerTexte(std::string texte);
+        vector<string> decomposerPhrase(std::string texte);
         void startMoteurSemantique(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux, QTextEdit *&texteResult, QDoubleSpinBox *&texteSeuil, QLabel *&scoreCP, QLabel *&scoreS,QLabel *&scoreV, QLabel *&scoreT);
         float testCopyPaste(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux);
         float testSynonyme(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux);
         float testVerbe(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux);
         void colorPlagiat(QTextEdit *&Text);
+        vector< vector<string> > deleteLinkWords(vector< vector<string> > texte);
+        string getBaseVerbe(string mot);
+        string getTerminaisonVerbe(string mot);
+        bool getVerbeIrregulier(string mot);
+        int getNbMotsTexte(vector< vector<string> > texte);
+        string testVerbeOneWord(string mot);
 };
 
 #endif // MOTEURSEMANTIQUE_H
