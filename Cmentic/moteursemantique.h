@@ -18,6 +18,7 @@ class moteurSemantique
         void startMoteurSemantique(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux, QTextEdit *&texteResult, QDoubleSpinBox *&texteSeuil, QLabel *&scoreCP, QLabel *&scoreS,QLabel *&scoreV, QLabel *&scoreT);
         float testCopyPaste(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux);
         float testSynonyme(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux);
+        bool isSynonyme(string s1, string s2);
         float testVerbe(QTextEdit *&texteOriginal, QTextEdit *&texteDouteux);
         void colorPlagiat(QTextEdit *&Text);
         vector< vector<string> > deleteLinkWords(vector< vector<string> > texte);
@@ -25,7 +26,6 @@ class moteurSemantique
         string getTerminaisonVerbe(string mot);
         bool getVerbeIrregulier(string mot);
         int getNbMotsTexte(vector< vector<string> > texte);
-        string testVerbeOneWord(string mot);
 };
 
 #endif // MOTEURSEMANTIQUE_H

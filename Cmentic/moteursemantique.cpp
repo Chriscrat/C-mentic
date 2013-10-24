@@ -148,9 +148,6 @@ float moteurSemantique::testCopyPaste(QTextEdit *&TextEditOriginal,QTextEdit *&T
     {
         for(int j=0; j<phrasesSoupcon.size(); j++)
         {
-            //cout<<"Sortie1:"<<phrasesOriginales[i]<<endl;
-            //cout<<"Sortie2"<<phrasesSoupcon[j]<<endl;
-
             phrasesOriginales[i] = boost::trim_left_copy(phrasesOriginales[i]);
             phrasesOriginales[i] = boost::trim_right_copy(phrasesOriginales[i]);
             phrasesSoupcon[j] = boost::trim_left_copy(phrasesSoupcon[j]);
@@ -160,16 +157,13 @@ float moteurSemantique::testCopyPaste(QTextEdit *&TextEditOriginal,QTextEdit *&T
             {
                 if(phrasesOriginales[i] == phrasesSoupcon[j])
                 {
-                    cout<<"phrase copiee!"<<endl;
                     nbPlagiat++;
                 }
             }
         }
     }
-    cout<<"nb phrases du texte:"<<(phrasesSoupcon.size()-1)<<endl;
-    cout<<"nb plagiats releves:"<<nbPlagiat<<endl;
 
-    scorePlagiat = (float(nbPlagiat)/(phrasesSoupcon.size()-1)*100);
+    scorePlagiat = (float(nbPlagiat)/(phrasesSoupcon.size())*100);
 
     return scorePlagiat;
 }
@@ -206,7 +200,7 @@ float moteurSemantique::testSynonyme(QTextEdit *&TextEditOriginal,QTextEdit *&Te
                 for(size_t l=0; l<listeTexteSoupconPlagiat[j].size(); l++)
                 {
                     nbMot=listeTexteSoupconPlagiat[j].size();
-                    if(con->isSynonyme(listeTexteSoupconPlagiat[j][l],listeTexteOriginal[i][k]))
+                    if(isSynonyme(listeTexteSoupconPlagiat[j][l],listeTexteOriginal[i][k]))
                     {
                         QString match = QString::fromStdString(listeTexteSoupconPlagiat[j][l]);
                         result = result.replace(match,"<bl> "+QString::fromStdString(listeTexteSoupconPlagiat[j][l])+"</bl>");
@@ -226,8 +220,13 @@ float moteurSemantique::testSynonyme(QTextEdit *&TextEditOriginal,QTextEdit *&Te
         scorePlagiat = (float(nbPlagiatTotal)/nbMot)*100;
     }
 
-    cout << TextEditSoupcon->toPlainText().toLower().toStdString() << endl;
     return scorePlagiat;
+}
+
+bool moteurSemantique::isSynonyme(string s1, string s2)
+{
+    // TODO : Système de cache pour ne pas appeler autant la BDD
+    return con->getSynonymes(s1).contains(s2);
 }
 
 void moteurSemantique::colorPlagiat(QTextEdit *&Text)
@@ -246,12 +245,9 @@ void moteurSemantique::colorPlagiat(QTextEdit *&Text)
 //JULIEN
 vector< vector<string> > moteurSemantique::deleteLinkWords(vector< vector<string> > texte)
 {
-    QVector<string> bdd;
+    QVector<string> bdd = con->getMotLiaison();
     vector< vector<string> > texteSortie;
     vector<string> ligneSortie;
-    bdd.append("au");
-    bdd.append("de");
-    bdd.append("la");
 
     for(int i=0; i<texte.size();i++)
     {
@@ -261,8 +257,6 @@ vector< vector<string> > moteurSemantique::deleteLinkWords(vector< vector<string
             {
                 if(bdd[k].compare(texte[i][j])==0)
                 {
-                    cout<<texte[i][j]<<endl;
-                    cout<<bdd[k]<<endl;
                     texte[i][j].erase();
                 }
             }
@@ -274,7 +268,6 @@ vector< vector<string> > moteurSemantique::deleteLinkWords(vector< vector<string
         {
             if(!texte[l][m].empty())
             {
-                cout<<"res:"<<texte[l][m]<<endl;
                 ligneSortie.push_back(texte[l][m]);
             }
         }
@@ -303,114 +296,79 @@ int moteurSemantique::getNbMotsTexte(vector< vector<string> > texte)
 
 float moteurSemantique::testVerbe(QTextEdit *&TextEditOriginal,QTextEdit *&TextEditSoupcon)
 {
-    string retourMotOrig;
-    string retourMotSoupcon;
-    string retourCompteurVerbes;
+    int nbVerbes = 0;
+    int nbVerbesPareils = 0;
 
     string texteOriginal = TextEditOriginal->toPlainText().toLower().toStdString();
     string texteSoupconPlagiat = TextEditSoupcon->toPlainText().toLower().toStdString();
 
-    vector< vector<string> > listeTexteOriginal;
-    vector< vector<string> > listeTexteSoupconPlagiat;
-
-    int nbMot=0;
-    int nbVerbesTexteAnalyse=0;
-    int nbVerbesPlagies=0;
-    float scorePlagiat=0.0;
-
-    listeTexteOriginal= decomposerTexte(texteOriginal);
+    vector< vector<string> > listeTexteOriginal= decomposerTexte(texteOriginal);
+    cout << "nb lignes av : " << listeTexteOriginal.size();
     listeTexteOriginal = deleteLinkWords(listeTexteOriginal);
 
-    listeTexteSoupconPlagiat = decomposerTexte(texteSoupconPlagiat);
+    vector< vector<string> > listeTexteSoupconPlagiat = decomposerTexte(texteSoupconPlagiat);
     listeTexteSoupconPlagiat = deleteLinkWords(listeTexteSoupconPlagiat);
 
-    //Compter le nombre de verbes du texte plagié
-    for(size_t h=0; h<listeTexteSoupconPlagiat.size(); h++)
-    {
-        for(size_t g=0; g<listeTexteSoupconPlagiat[h].size();g++)
-        {
-            retourCompteurVerbes = testVerbeOneWord(listeTexteSoupconPlagiat[h][g]);
-            if(!retourCompteurVerbes.empty())
-            {
-                nbVerbesTexteAnalyse++;
-            }
-        }
-    }
+    cout << "nb lignes ap : " << listeTexteOriginal.size();
 
+    QVector<string> terminaisons = con->getTerminaisonsPossibles();
 
-    for(size_t i=0; i<listeTexteOriginal.size(); i++)
-    {
-        //ligne
-        for(size_t j=0; j<listeTexteSoupconPlagiat.size(); j++)
-        {
-            int nbPlagiat = 0;
-            //mot
-            for(size_t k=0; k<listeTexteOriginal[i].size(); k++)
-            {
-                for(size_t l=0; l<listeTexteSoupconPlagiat[j].size(); l++)
-                {
-                    nbMot=listeTexteSoupconPlagiat[j].size();
+    for (int idxLigneOriginal = 0; idxLigneOriginal < listeTexteOriginal.size(); ++idxLigneOriginal) {
+        for (int idxMotOriginal = 0; idxMotOriginal < listeTexteOriginal[idxLigneOriginal].size(); ++idxMotOriginal) {
+            // Pour chaque mot
 
-                    retourMotOrig = testVerbeOneWord(listeTexteOriginal[i][k]);
-                    retourMotSoupcon = testVerbeOneWord(listeTexteSoupconPlagiat[j][l]);
+            QVector<string> basesVerbePossible;
 
-                    if(!(retourMotOrig.empty()&& retourMotSoupcon.empty()))
-                    {
-                        if(retourMotOrig == retourMotSoupcon)
-                        {
-                            cout<<"verbe soupcon plagié"<<endl;
-                            cout<<"verbe soupcon:"<<retourMotSoupcon<<endl;
-                            cout<<"verbe orig:"<<retourMotOrig<<endl;
-                            nbVerbesPlagies++;
-                        }
-                    }
-                    retourMotOrig="";
-                    retourMotSoupcon="";
+            // Si on trouve une terminaison
+            for (int i = 0; i < terminaisons.size(); ++i) {
+                if (boost::algorithm::ends_with(listeTexteOriginal[idxLigneOriginal][idxMotOriginal], terminaisons[i])){
+                    basesVerbePossible.append(listeTexteOriginal[idxLigneOriginal][idxMotOriginal].substr(listeTexteOriginal[idxLigneOriginal][idxMotOriginal].size() - terminaisons[i].size(), terminaisons.size()));
                 }
             }
-        }
-        cout<<"Nombre de verbes du texte:"<<nbVerbesTexteAnalyse<<endl;
-        cout<<"Nombre de verbes plagies:"<<nbVerbesPlagies<<endl;
-        //cout<<"Pourcentage de verbes plagiés:"<<((nbVerbesPlagies/nbVerbesTexteAnalyse)*100)<<"%"<<endl;
-        if(nbVerbesPlagies==0 && nbVerbesTexteAnalyse == 0)
-        {
-            scorePlagiat = 0;
-        }
-        else
-        {
-            scorePlagiat = (float(nbVerbesPlagies)/nbVerbesTexteAnalyse)*100;
+
+            QVector<string> conjugaisons;
+
+            // Pour chaque base possible, vérifier si c'est bien un verbe et récupérer ses conjugaisons (on garde le premier trouvé)
+            for (int i = 0; i < basesVerbePossible.size(); ++i) {
+                QVector<string> possibleConjugaisons = con->getConjugaisons(basesVerbePossible[i]);
+                if (possibleConjugaisons.size() > 0)
+                {
+                    conjugaisons = possibleConjugaisons;
+                    // Pas trouvé d'autres moyens pour sortir de la boucle
+                    i = basesVerbePossible.size();
+                }
+            }
+
+            // Si le mot testé n'est pas un verbe "normal" on test s'il est irrégulier
+            if (conjugaisons.size() == 0)
+            {
+                QVector<string> possibleConjugaisons = con->getConjugaisonsIrregulier(listeTexteOriginal[idxLigneOriginal][idxMotOriginal]);
+                if (possibleConjugaisons.size() > 0)
+                {
+                    conjugaisons = possibleConjugaisons;
+                }
+            }
+
+            // Si le mot est un verbe (irrégulier ou pas)
+            if (conjugaisons.size() > 0)
+            {
+                nbVerbes++;
+
+                for (int idxConjug = 0; idxConjug < conjugaisons.size(); ++idxConjug) {
+                    for (int idxLigneSoupcon = 0; idxLigneSoupcon < listeTexteSoupconPlagiat.size(); ++idxLigneSoupcon) {
+                        for (int idxMotSoupcon = 0; idxMotSoupcon < listeTexteSoupconPlagiat[idxLigneSoupcon].size(); ++idxMotSoupcon) {
+                            // Si un mot dans le deuxième texte est identique, on dit qu'il est plagié
+                            if (conjugaisons[idxConjug] == listeTexteSoupconPlagiat[idxLigneSoupcon][idxMotSoupcon])
+                            {
+                                nbVerbesPareils++;
+                            }
+                        }
+                    }
+                }
+            }
+
         }
     }
-    return scorePlagiat;
+
+    return nbVerbesPareils == 0 ? 0 : float(nbVerbesPareils)/nbVerbes * 100;
 }
-
-string moteurSemantique::testVerbeOneWord(string mot)
-{
-    string retour="";
-
-    retour = con->wordOrVerb(mot);
-    cout<<"Retour1:"<<retour<<endl;
-    if(retour.empty())
-    {
-        retour = con->isIrregularVerb(mot);
-        cout<<"Retour2:"<<retour<<endl;
-
-        if(retour.empty())
-        {
-            retour= con->getFirstGroupVerbs(mot);
-            cout<<"Retour3:"<<retour<<endl;
-        }
-    }
-    else
-    {
-        retour = "";
-    }
-    return retour;
-}
-
-
-
-
-
-
-
