@@ -50,7 +50,29 @@ void moteurSemantique::startMoteurSemantique(QTextEdit *&TextEditOriginal,QTextE
     scoreTestVerbe = testVerbe(TextEditOriginal,TextEditSoupcon);
 
     double seuilPlagiat = seuil->value();
-    float scorePlagiat = (scoreCopyPaste + scoreTestSynonyme + scoreTestVerbe) / 3;
+
+    // Calcul du score
+    float sum = 0;
+    float count = 0;
+    if (scoreCopyPaste >= 0)
+    {
+        sum += scoreCopyPaste;
+        count++;
+    }
+    if (scoreTestSynonyme >= 0)
+    {
+        sum += scoreTestSynonyme;
+        count++;
+    }
+    if (scoreTestVerbe >= 0)
+    {
+        sum += scoreTestVerbe;
+        count++;
+    }
+
+    if (count == 0) count = 1;
+
+    float scorePlagiat = sum / count;
 
     cout << "Recapitulatif des scores de plagiat " << endl;
     cout << " - Par copier/coller : " << scoreCopyPaste << "%" << endl;
@@ -59,9 +81,9 @@ void moteurSemantique::startMoteurSemantique(QTextEdit *&TextEditOriginal,QTextE
     cout << "Ce qui équivaut à un total de " << scorePlagiat << "% de texte susceptible d'etre plagie" << endl;
 
     QString sCP, sS, sV, sT;
-    sCP.setNum(scoreCopyPaste,'f');
-    sS.setNum(scoreTestSynonyme,'f');
-    sV.setNum(scoreTestVerbe,'f');
+    sCP.setNum(scoreCopyPaste == -1 ? 0 : scoreCopyPaste,'f');
+    sS.setNum(scoreTestSynonyme == -1 ? 0 : scoreTestSynonyme,'f');
+    sV.setNum(scoreTestVerbe == -1 ? 0 : scoreTestVerbe,'f');
     sT.setNum(scorePlagiat,'f');
 
     scoreCP->setText(sCP+"%");
@@ -116,7 +138,7 @@ float moteurSemantique::testCopyPaste(QTextEdit *&TextEditOriginal,QTextEdit *&T
         }
     }
 
-    scorePlagiat = (float(nbPlagiat)/(phrasesSoupcon.size())*100);
+    scorePlagiat = nbPlagiat == 0 ? -1 : (float(nbPlagiat)/(phrasesSoupcon.size())*100);
 
     return scorePlagiat;
 }
@@ -166,7 +188,7 @@ float moteurSemantique::testSynonyme(QTextEdit *&TextEditOriginal,QTextEdit *&Te
     }
     if(nbPlagiatTotal==0)
     {
-        scorePlagiat = 0;
+        scorePlagiat = -1;
     }
     else
     {
@@ -320,5 +342,5 @@ float moteurSemantique::testVerbe(QTextEdit *&TextEditOriginal,QTextEdit *&TextE
         }
     }
 
-    return nbVerbesPareils == 0 ? 0 : float(nbVerbesPareils)/nbVerbes * 100;
+    return nbVerbesPareils == 0 ? -1 : float(nbVerbesPareils)/nbVerbes * 100;
 }
