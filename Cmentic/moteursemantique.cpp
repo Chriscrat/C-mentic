@@ -109,9 +109,9 @@ float moteurSemantique::testCopyPaste(QTextEdit *&TextEditOriginal,QTextEdit *&T
     vector<string> phrasesOriginales;
     vector<string> phrasesSoupcon;
 
+    float sumScores = 0;
+    int nbPhrases = 0;
     float scorePlagiat=0.0;
-    int nbMots = 0;
-    int nbPlagiat = 0;
 
     string texteOriginal = TextEditOriginal->toPlainText().toLower().toStdString();
     string texteSoupconPlagiat = TextEditSoupcon->toPlainText().toLower().toStdString();
@@ -123,22 +123,38 @@ float moteurSemantique::testCopyPaste(QTextEdit *&TextEditOriginal,QTextEdit *&T
     {
         for(int j=0; j<phrasesSoupcon.size(); j++)
         {
-            phrasesOriginales[i] = boost::trim_left_copy(phrasesOriginales[i]);
-            phrasesOriginales[i] = boost::trim_right_copy(phrasesOriginales[i]);
-            phrasesSoupcon[j] = boost::trim_left_copy(phrasesSoupcon[j]);
-            phrasesSoupcon[j] = boost::trim_right_copy(phrasesSoupcon[j]);
+
+            phrasesOriginales[i] = boost::trim_copy(phrasesOriginales[i]);
+            phrasesSoupcon[j] = boost::trim_copy(phrasesSoupcon[j]);
 
             if(phrasesOriginales[i]!="" && phrasesSoupcon[j]!="")
             {
-                if(phrasesOriginales[i] == phrasesSoupcon[j])
-                {
-                    nbPlagiat++;
+                nbPhrases++;
+
+                vector<string> motsOri;
+                boost::split(motsOri, phrasesOriginales[i], boost::is_any_of(" ,()"));
+                vector<string> motsSoup;
+                boost::split(motsSoup, phrasesSoupcon[i], boost::is_any_of(" ,()"));
+
+                int nbMotsPhraseOri = motsOri.size();
+                int nbMotsPareils = 0;
+
+                for (int k = 0; k < motsOri.size(); ++k) {
+                    for (int l = 0; l < motsSoup.size(); ++l) {
+                        if (motsOri[k] == motsSoup[l])
+                        {
+                            nbMotsPareils++;
+                            l = motsSoup.size();
+                        }
+                    }
                 }
+
+                sumScores += float(nbMotsPareils) / nbMotsPhraseOri;
             }
         }
     }
 
-    scorePlagiat = nbPlagiat == 0 ? -1 : (float(nbPlagiat)/(phrasesSoupcon.size())*100);
+    scorePlagiat = 0 == nbPhrases ? -1 : (sumScores/nbPhrases) * 100;
 
     return scorePlagiat;
 }
