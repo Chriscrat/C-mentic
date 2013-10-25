@@ -27,64 +27,17 @@ vector<string> moteurSemantique::decomposerPhrase(string texte)
 
 vector< vector<string> > moteurSemantique::decomposerTexte(std::string texte)
 {
-    //DECOMPOSITION DES PHRASES EN VECTOR 2 DIMENSIONS
-    //1ERE DIMENSION : LIGNES
-    //2EME DIMENSION : MOT
-    //con->isIrregularVerb("paraissez");
-    //con->getFirstGroupVerbs("utilisons");
-   // cout<<"Sortie vaut:"<<testVerbeOneWord("ajouter")<<endl;
+    vector<vector<string>> result;
+    vector<string> lines;
+    boost::split(lines, texte, boost::is_any_of("\n"));
 
-    string delimiter1 = ".";
-    string delimiter3 = " ";
-    string token0;
-    string token1;
-    string phraseASuivre;
-
-    size_t pos = 0;
-    size_t posA = 0;
-    size_t posB = 0;
-    size_t posC = 0;
-
-    vector< vector<string> > listePhrases;
-    vector<string> phrase;
-
-    //std::string::npos => jusqu'à la fin de la chaine
-    //Ici, on décompose les phrases que l'on ajoute à un vector a 2 dimensions
-    //Les lignes = phrases, colonne = mot
-
-    while ((pos = texte.find(delimiter1)) != -1)
-    {
-        posA = 0;
-        posB = 0;
-        //On vide la phrase coourante pour ne garder que la nouvelle
-        phrase.clear();
-        posC = 0;
-        token0 = texte.substr(posC, pos);
-        //supppression doublons ici
-
-        try
-        {
-            phraseASuivre = texte.substr(pos+2);
-        }
-        catch(exception e)
-        {
-            phraseASuivre.clear();
-        }
-
-        while ((posA = token0.find(delimiter3)) != std::string::npos)
-        {
-            token1 = token0.substr(posB, posA);
-            phrase.push_back(token1);
-            token0.erase(0, posA + delimiter3.length());
-            posB = 0;
-        }
-        phrase.push_back(token0);
-        listePhrases.push_back(phrase);
-        token0.erase(0, pos + delimiter3.length());
-        posC = pos+2;
-        texte = phraseASuivre;
+    for (int i = 0; i < lines.size(); ++i) {
+        vector<string> mots;
+        boost::split(mots, lines[i], boost::is_any_of(". \t"));
+        result.insert(result.end(), mots);
     }
-    return listePhrases;
+
+    return result;
 }
 
 void moteurSemantique::startMoteurSemantique(QTextEdit *&TextEditOriginal,QTextEdit *&TextEditSoupcon, QTextEdit *&texteResult, QDoubleSpinBox *&seuil, QLabel *&scoreCP, QLabel *&scoreS, QLabel *&scoreV, QLabel *&scoreT)
@@ -303,13 +256,10 @@ float moteurSemantique::testVerbe(QTextEdit *&TextEditOriginal,QTextEdit *&TextE
     string texteSoupconPlagiat = TextEditSoupcon->toPlainText().toLower().toStdString();
 
     vector< vector<string> > listeTexteOriginal= decomposerTexte(texteOriginal);
-    cout << "nb lignes av : " << listeTexteOriginal.size();
     listeTexteOriginal = deleteLinkWords(listeTexteOriginal);
 
     vector< vector<string> > listeTexteSoupconPlagiat = decomposerTexte(texteSoupconPlagiat);
     listeTexteSoupconPlagiat = deleteLinkWords(listeTexteSoupconPlagiat);
-
-    cout << "nb lignes ap : " << listeTexteOriginal.size();
 
     QVector<string> terminaisons = con->getTerminaisonsPossibles();
 
@@ -322,7 +272,7 @@ float moteurSemantique::testVerbe(QTextEdit *&TextEditOriginal,QTextEdit *&TextE
             // Si on trouve une terminaison
             for (int i = 0; i < terminaisons.size(); ++i) {
                 if (boost::algorithm::ends_with(listeTexteOriginal[idxLigneOriginal][idxMotOriginal], terminaisons[i])){
-                    basesVerbePossible.append(listeTexteOriginal[idxLigneOriginal][idxMotOriginal].substr(listeTexteOriginal[idxLigneOriginal][idxMotOriginal].size() - terminaisons[i].size(), terminaisons.size()));
+                    basesVerbePossible.append(listeTexteOriginal[idxLigneOriginal][idxMotOriginal].substr(0, listeTexteOriginal[idxLigneOriginal][idxMotOriginal].size() - terminaisons[i].size()));
                 }
             }
 

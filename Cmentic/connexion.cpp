@@ -184,12 +184,12 @@ QVector<string> Connexion::getConjugaisons(string mot)
             const QString n1p = rec.value("n1pluriel").toString();
             const QString n2p = rec.value("n2pluriel").toString();
             const QString n3p = rec.value("n3pluriel").toString();
-            conjugaisons.append(n1s.toStdString());
-            conjugaisons.append(n2s.toStdString());
-            conjugaisons.append(n3s.toStdString());
-            conjugaisons.append(n1p.toStdString());
-            conjugaisons.append(n2p.toStdString());
-            conjugaisons.append(n3p.toStdString());
+            conjugaisons.append(mot + n1s.toStdString());
+            conjugaisons.append(mot + n2s.toStdString());
+            conjugaisons.append(mot + n3s.toStdString());
+            conjugaisons.append(mot + n1p.toStdString());
+            conjugaisons.append(mot + n2p.toStdString());
+            conjugaisons.append(mot + n3p.toStdString());
        }
     }
     return conjugaisons;
